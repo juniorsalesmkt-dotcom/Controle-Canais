@@ -13,6 +13,11 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Health check
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok' });
+  });
+
   // Helper to get local DB user id from Firebase UID
   const getDbUser = async (uid: string, email: string) => {
     return await getOrCreateUser(uid, email);
@@ -288,4 +293,7 @@ async function startServer() {
   });
 }
 
-startServer();
+startServer().catch(err => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
+});
