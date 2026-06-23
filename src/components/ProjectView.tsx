@@ -19,6 +19,7 @@ import { KanbanBoard } from './KanbanBoard';
 import { CalendarView } from './CalendarView';
 import { ContentManager } from './ContentManager';
 import { ProjectModal } from './ProjectModal';
+import { toast } from 'react-hot-toast';
 
 interface ProjectViewProps {
   projectId: number;
@@ -38,8 +39,9 @@ export function ProjectView({ projectId }: ProjectViewProps) {
       const projects = await api.getProjects();
       const p = projects.find((x: Project) => x.id === projectId);
       setProject(p || null);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      toast.error(err.message || 'Erro ao carregar dados do projeto.');
     } finally {
       setLoading(false);
     }

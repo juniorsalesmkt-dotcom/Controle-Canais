@@ -16,6 +16,7 @@ import { api } from '../lib/api';
 import { Project } from '../types';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'react-hot-toast';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -37,8 +38,9 @@ export function Layout({ children, onNavigateHome, onNavigateProject, activeProj
     try {
       const data = await api.getProjects();
       setProjects(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      toast.error(err.message || 'Erro ao carregar lista de projetos.');
     }
   };
 

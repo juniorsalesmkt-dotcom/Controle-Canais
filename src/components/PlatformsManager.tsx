@@ -57,9 +57,9 @@ export function PlatformsManager({ project }: { project: Project }) {
         toast.success(`Plataforma ${type} salva!`);
         await fetchPlatforms();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Erro de conexão ao salvar plataforma.');
+      toast.error(err.message || 'Erro de conexão ao salvar plataforma.');
     } finally {
       setSaving(null);
     }

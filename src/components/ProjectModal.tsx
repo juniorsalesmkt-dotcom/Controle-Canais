@@ -65,9 +65,9 @@ export function ProjectModal({ isOpen, onClose, onSuccess, project }: ProjectMod
         toast.success(project ? 'Projeto atualizado!' : 'Projeto criado!');
         onSuccess();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Erro de conexão ao salvar projeto.');
+      toast.error(err.message || 'Erro de conexão ao salvar projeto.');
     } finally {
       setLoading(false);
     }
@@ -90,9 +90,9 @@ export function ProjectModal({ isOpen, onClose, onSuccess, project }: ProjectMod
         toast.success('Projeto excluído!');
         onSuccess();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Erro de conexão ao excluir projeto.');
+      toast.error(err.message || 'Erro de conexão ao excluir projeto.');
     } finally {
       setLoading(false);
     }

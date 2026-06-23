@@ -72,9 +72,9 @@ export function ContentModal({ isOpen, onClose, onSuccess, project, content }: C
         toast.success(content ? 'Conteúdo atualizado!' : 'Conteúdo criado!');
         onSuccess();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Erro de conexão ao salvar conteúdo.');
+      toast.error(err.message || 'Erro de conexão ao salvar conteúdo.');
     } finally {
       setLoading(false);
     }
@@ -91,9 +91,9 @@ export function ContentModal({ isOpen, onClose, onSuccess, project, content }: C
         toast.success('Conteúdo excluído!');
         onSuccess();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Erro de conexão ao excluir conteúdo.');
+      toast.error(err.message || 'Erro de conexão ao excluir conteúdo.');
     } finally {
       setLoading(false);
     }

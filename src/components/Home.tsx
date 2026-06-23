@@ -42,9 +42,9 @@ export function Home({ onSelectProject }: HomeProps) {
       } else {
         setStats(data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Erro de conexão ao carregar dashboard.');
+      toast.error(err.message || 'Erro de conexão ao carregar dashboard.');
     } finally {
       setLoading(false);
     }
