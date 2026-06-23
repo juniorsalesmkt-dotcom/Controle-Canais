@@ -26,6 +26,16 @@ export default function App() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (!user) {
+      document.title = 'Login - Ecosistema de Conteúdo';
+    } else if (activeProjectId) {
+      document.title = 'Projeto - Ecosistema de Conteúdo';
+    } else {
+      document.title = 'Início - Ecosistema de Conteúdo';
+    }
+  }, [user, activeProjectId]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#09090b] flex items-center justify-center">
