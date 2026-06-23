@@ -4,7 +4,7 @@ import firebaseConfig from '../../firebase-applet-config.json';
 
 if (!getApps().length) {
   initializeApp({
-    projectId: firebaseConfig.projectId,
+    projectId: "meu-ecossistema-d6b49",
   });
 }
 
