@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import { Project, PlatformType } from '../types';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'react-hot-toast';
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -51,14 +52,22 @@ export function ProjectModal({ isOpen, onClose, onSuccess, project }: ProjectMod
     setLoading(true);
     try {
       const data = { name, niche, description, metaPrincipal, observacoes, platformsActive };
+      let result;
       if (project) {
-        await api.updateProject(project.id, data);
+        result = await api.updateProject(project.id, data);
       } else {
-        await api.createProject(data);
+        result = await api.createProject(data);
       }
-      onSuccess();
+
+      if (result.error) {
+        toast.error(`Erro: ${result.error}`);
+      } else {
+        toast.success(project ? 'Projeto atualizado!' : 'Projeto criado!');
+        onSuccess();
+      }
     } catch (err) {
       console.error(err);
+      toast.error('Erro de conexão ao salvar projeto.');
     } finally {
       setLoading(false);
     }
@@ -74,10 +83,16 @@ export function ProjectModal({ isOpen, onClose, onSuccess, project }: ProjectMod
     if (!project || !window.confirm('Tem certeza que deseja excluir este projeto? Esta ação é irreversível.')) return;
     setLoading(true);
     try {
-      await api.deleteProject(project.id);
-      onSuccess();
+      const result = await api.deleteProject(project.id);
+      if (result.error) {
+        toast.error(`Erro: ${result.error}`);
+      } else {
+        toast.success('Projeto excluído!');
+        onSuccess();
+      }
     } catch (err) {
       console.error(err);
+      toast.error('Erro de conexão ao excluir projeto.');
     } finally {
       setLoading(false);
     }

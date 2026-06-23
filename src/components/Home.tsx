@@ -21,6 +21,7 @@ import {
 import { motion } from 'motion/react';
 import { cn, formatNumber } from '../lib/utils';
 import { ProjectModal } from './ProjectModal';
+import { toast } from 'react-hot-toast';
 
 interface HomeProps {
   onSelectProject: (id: number) => void;
@@ -36,9 +37,14 @@ export function Home({ onSelectProject }: HomeProps) {
     setLoading(true);
     try {
       const data = await api.getDashboard();
-      setStats(data);
+      if (data.error) {
+        toast.error(`Erro ao carregar dashboard: ${data.error}`);
+      } else {
+        setStats(data);
+      }
     } catch (err) {
       console.error(err);
+      toast.error('Erro de conexão ao carregar dashboard.');
     } finally {
       setLoading(false);
     }

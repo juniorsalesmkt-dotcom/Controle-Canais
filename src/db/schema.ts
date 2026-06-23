@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, timestamp, jsonb, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -34,7 +34,9 @@ export const platforms = pgTable('platforms', {
   followers: integer('followers').default(0).notNull(),
   followersGoal: integer('followers_goal').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
-});
+}, (table) => ({
+  projectTypeIdx: uniqueIndex('project_type_idx').on(table.projectId, table.type),
+}));
 
 export const contents = pgTable('contents', {
   id: serial('id').primaryKey(),

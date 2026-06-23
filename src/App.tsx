@@ -12,6 +12,7 @@ import { Home } from './components/Home';
 import { ProjectView } from './components/ProjectView';
 import { Project } from './types';
 import { Loader2 } from 'lucide-react';
+import { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -49,17 +50,26 @@ export default function App() {
   }
 
   return (
-    <Layout 
-      onNavigateHome={() => setActiveProjectId(null)}
-      onNavigateProject={(id) => setActiveProjectId(id)}
-      activeProjectId={activeProjectId}
-    >
-      {activeProjectId ? (
-        <ProjectView projectId={activeProjectId} />
-      ) : (
-        <Home onSelectProject={(id) => setActiveProjectId(id)} />
-      )}
-    </Layout>
+    <>
+      <Toaster position="top-right" toastOptions={{
+        style: {
+          background: '#18181b',
+          color: '#fff',
+          border: '1px border #27272a',
+        },
+      }} />
+      <Layout 
+        onNavigateHome={() => setActiveProjectId(null)}
+        onNavigateProject={(id) => setActiveProjectId(id)}
+        activeProjectId={activeProjectId}
+      >
+        {activeProjectId ? (
+          <ProjectView projectId={activeProjectId} />
+        ) : (
+          <Home onSelectProject={(id) => setActiveProjectId(id)} />
+        )}
+      </Layout>
+    </>
   );
 }
 

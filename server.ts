@@ -4,7 +4,7 @@ import { createServer as createViteServer } from 'vite';
 import { requireAuth, AuthRequest } from './src/middleware/auth.ts';
 import { db } from './src/db/index.ts';
 import { users, projects, platforms, contents } from './src/db/schema.ts';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, inArray } from 'drizzle-orm';
 import { getOrCreateUser } from './src/db/users.ts';
 
 async function startServer() {
@@ -238,8 +238,8 @@ async function startServer() {
         });
       }
 
-      const userPlatforms = await db.select().from(platforms).where(sql`${platforms.projectId} IN ${projectIds}`);
-      const userContents = await db.select().from(contents).where(sql`${contents.projectId} IN ${projectIds}`);
+      const userPlatforms = await db.select().from(platforms).where(inArray(platforms.projectId, projectIds));
+      const userContents = await db.select().from(contents).where(inArray(contents.projectId, projectIds));
       
       const totalFollowers = userPlatforms.reduce((acc, curr) => acc + (curr.followers || 0), 0);
       const totalScheduled = userContents.filter(c => c.status === 'Programado').length;

@@ -14,6 +14,7 @@ import {
 import { PlatformIcon } from './Home';
 import { cn, formatNumber } from '../lib/utils';
 import { motion } from 'motion/react';
+import { toast } from 'react-hot-toast';
 
 export function PlatformsManager({ project }: { project: Project }) {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
@@ -49,10 +50,16 @@ export function PlatformsManager({ project }: { project: Project }) {
         followers: data.followers ?? existing?.followers ?? 0,
         followersGoal: data.followersGoal ?? existing?.followersGoal ?? 0,
       };
-      await api.savePlatform(project.id, payload);
-      await fetchPlatforms();
+      const result = await api.savePlatform(project.id, payload);
+      if (result.error) {
+        toast.error(`Erro ao salvar plataforma: ${result.error}`);
+      } else {
+        toast.success(`Plataforma ${type} salva!`);
+        await fetchPlatforms();
+      }
     } catch (err) {
       console.error(err);
+      toast.error('Erro de conexão ao salvar plataforma.');
     } finally {
       setSaving(null);
     }

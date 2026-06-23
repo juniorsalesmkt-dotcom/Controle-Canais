@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import { Project, Content, ContentStatus, PlatformType } from '../types';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'react-hot-toast';
 
 interface ContentModalProps {
   isOpen: boolean;
@@ -58,14 +59,22 @@ export function ContentModal({ isOpen, onClose, onSuccess, project, content }: C
     setLoading(true);
     try {
       const data = { title, platform, publicationDate, description, notes, status };
+      let result;
       if (content) {
-        await api.updateContent(content.id, data);
+        result = await api.updateContent(content.id, data);
       } else {
-        await api.createContent(project.id, data);
+        result = await api.createContent(project.id, data);
       }
-      onSuccess();
+      
+      if (result.error) {
+        toast.error(`Erro: ${result.error}`);
+      } else {
+        toast.success(content ? 'Conteúdo atualizado!' : 'Conteúdo criado!');
+        onSuccess();
+      }
     } catch (err) {
       console.error(err);
+      toast.error('Erro de conexão ao salvar conteúdo.');
     } finally {
       setLoading(false);
     }
@@ -75,10 +84,16 @@ export function ContentModal({ isOpen, onClose, onSuccess, project, content }: C
     if (!content || !window.confirm('Excluir este conteúdo?')) return;
     setLoading(true);
     try {
-      await api.deleteContent(content.id);
-      onSuccess();
+      const result = await api.deleteContent(content.id);
+      if (result.error) {
+        toast.error(`Erro: ${result.error}`);
+      } else {
+        toast.success('Conteúdo excluído!');
+        onSuccess();
+      }
     } catch (err) {
       console.error(err);
+      toast.error('Erro de conexão ao excluir conteúdo.');
     } finally {
       setLoading(false);
     }
