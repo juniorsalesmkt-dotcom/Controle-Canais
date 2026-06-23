@@ -1,11 +1,24 @@
 import { auth } from './firebase';
 
 async function getHeaders() {
-  const token = await auth.currentUser?.getIdToken();
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      return {
+        'Content-Type': 'application/json',
+      };
+    }
+    const token = await user.getIdToken();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+  } catch (err) {
+    console.error('Error getting auth headers:', err);
+    return {
+      'Content-Type': 'application/json',
+    };
+  }
 }
 
 async function handleResponse(res: Response) {
