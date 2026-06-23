@@ -1,0 +1,6 @@
+{
+  "name": "Ecosistema de Conteúdo",
+  "description": "Sistema moderno para gerenciamento de canais, redes sociais e produção de conteúdo digital.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
