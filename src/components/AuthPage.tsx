@@ -19,6 +19,11 @@ export function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isIframe, setIsIframe] = useState(false);
+
+  useEffect(() => {
+    setIsIframe(window.self !== window.top);
+  }, []);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +36,22 @@ export function AuthPage() {
         await createUserWithEmailAndPassword(auth, email, password);
       }
     } catch (err: any) {
-      setError('Falha na autenticação. Verifique suas credenciais.');
-      console.error(err);
+      console.error('Auth Error Details:', err);
+      if (err.code === 'auth/user-not-found') {
+        setError('Usuário não encontrado.');
+      } else if (err.code === 'auth/wrong-password') {
+        setError('Senha incorreta.');
+      } else if (err.code === 'auth/email-already-in-use') {
+        setError('Este email já está em uso.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('A senha deve ter pelo menos 6 caracteres.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Email inválido.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Falha de rede. Verifique sua conexão ou se o Firebase está configurado.');
+      } else {
+        setError(`Erro: ${err.message || 'Falha na autenticação.'}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -40,10 +59,22 @@ export function AuthPage() {
 
   const handleGoogleAuth = async () => {
     setLoading(true);
+    setError('');
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (err) {
-      setError('Falha no login com Google.');
+    } catch (err: any) {
+      console.error('Google Auth Error Details:', err);
+      if (err.code === 'auth/popup-blocked') {
+        setError('O popup de login foi bloqueado pelo seu navegador.');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError('O login foi cancelado.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('Login com Google não está ativado no console do Firebase.');
+      } else if (isIframe) {
+        setError('O login com Google pode falhar dentro do preview. Tente abrir o app em uma nova aba.');
+      } else {
+        setError(`Erro Google: ${err.message || 'Falha no login.'}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -120,7 +151,19 @@ export function AuthPage() {
             </div>
           </div>
 
-          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4">
+              <p className="text-red-400 text-sm text-center">{error}</p>
+              {isIframe && (
+                <button 
+                  onClick={() => window.open(window.location.href, '_blank')}
+                  className="w-full text-[10px] text-blue-400 hover:underline mt-2 text-center"
+                >
+                  Tentar abrir em uma nova aba
+                </button>
+              )}
+            </div>
+          )}
 
           <button 
             type="submit"
